@@ -1,3 +1,6 @@
+// Searches for Police Helicopters within the player radius and enables the searchlight to follow the player while wanted.
+// Having the Annihilator in the list enables the Weapons.
+
 using System;
 using GTA;
 using GTA.Native;

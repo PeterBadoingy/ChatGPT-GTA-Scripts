@@ -1,5 +1,5 @@
 // Press U to enable Darkmode. 
-//Dark mode switches off the vehicle lights if on and enables night vision inside a vehicle. 
+//Dark mode switches off the vehicle lights if on and enables night vision inside a vehicle disables if player exists vehicle. 
 //Need to adjust check on light status to prevent lights switching on when going into dark mode if the lights are currently off.
 using System;
 using System.Windows.Forms;

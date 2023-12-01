@@ -1,4 +1,4 @@
-// Import necessary namespaces for the script
+// Press Y to Drop Spike Stripes up to max:3 until 30-second recharge. Existing spikes are deleted on recharge or being far enough away to trigger them to delete automatically.
 using GTA;
 using GTA.Native;
 using GTA.Math;

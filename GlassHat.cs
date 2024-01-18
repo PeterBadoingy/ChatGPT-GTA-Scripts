@@ -1,6 +1,7 @@
 using System;
 using GTA;
 using GTA.Native;
+using GTA.Math;
 using System.Windows.Forms;
 
 public class HatGlassesScript : Script
@@ -135,7 +136,7 @@ public class HatGlassesScript : Script
             PlayAnimation(player, glassesOn ? "clothingspecs" : "clothingspecs", glassesOn ? "put_on" : "take_off");
             if (glassesOn)
             {
-                Wait(3500); // Adjust the time as needed
+                Wait(3400); // Adjust the time as needed
                 Function.Call(Hash.SET_PED_PROP_INDEX, player, 1, myGlasses, sgTextureGlasses, 2);
                 ShowNotification("Glasses are on");
             }
@@ -160,18 +161,79 @@ public class HatGlassesScript : Script
         Function.Call(Hash._DRAW_NOTIFICATION, false, false);
     }
 
-    // Function to play an animation
-    private void PlayAnimation(Entity entity, string animDict, string animName)
-    {
-        if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
-        {
-            Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
-            while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
-            {
-                Wait(100);
-            }
-        }
+ //Function to play an animation
+   private void PlayAnimation(Entity entity, string animDict, string animName)
+   {
+       if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
+       {
+           Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
+           while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
+           {
+               Wait(100);
+           }
+       }
 
-        Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 48, 0, false, false, false);
+Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 48, 0, false, false, false);
     }
 }
+
+
+
+
+
+
+//void TaskPlayAnim(int /* Ped */ ped, string animDictionary, string animationName, float blendInSpeed, float blendOutSpeed, int duration, int flag, float playbackRate, bool lockX, bool lockY, bool lockZ);
+
+//   private void PlayAnimation(Entity entity, string animDict, string animName)
+//   {
+//       if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
+//       {
+//           Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
+//           while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
+//           {
+//               Wait(100);
+//           }
+//       }
+
+//Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 48, 0, false, false, false);
+//    }
+//}
+
+
+
+
+//void TaskPlayAnimAdvanced(int /* Ped */ ped, string animDict, string animName, float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float animEnterSpeed, float animExitSpeed, int duration, Any flag, float animTime, Any p14, Any p15);
+
+//    private void PlayAnimation(Entity entity, string animDict, string animName)
+//    {
+//        if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
+//        {
+//            Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
+//            while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
+//            {
+//                Wait(100);
+//            }
+//        }
+
+//        Vector3 playerCoords = Game.Player.Character.Position;
+//        float playerHeading = Game.Player.Character.Heading;
+
+//        Function.Call(Hash.TASK_PLAY_ANIM_ADVANCED,
+//            entity.Handle,
+//            animDict,
+//            animName,
+//            playerCoords.X,
+//            playerCoords.Y,
+//            playerCoords.Z,
+//            0.0f,
+//            0.0f,
+//            playerHeading,
+//            1.0f,
+//            1.0f,
+//            1.0f,
+//            40,
+//            0.5f,
+//            0,
+//            0
+//        );
+//    }

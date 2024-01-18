@@ -172,6 +172,6 @@ public class HatGlassesScript : Script
             }
         }
 
-        Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 0, 0, false, false, false);
+        Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 48, 0, false, false, false);
     }
 }

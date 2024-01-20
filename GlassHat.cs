@@ -23,7 +23,7 @@ public class HatGlassesScript : Script
     public HatGlassesScript()
     {
         Tick += OnTick;
-        KeyDown += OnKeyDown;
+        KeyDown += OnKeyUp;
     }
 
     private void OnTick(object sender, EventArgs e)
@@ -31,7 +31,7 @@ public class HatGlassesScript : Script
         // Your main logic can go here if needed.
     }
 
-    private void OnKeyDown(object sender, KeyEventArgs e)
+    private void OnKeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.H)
         {

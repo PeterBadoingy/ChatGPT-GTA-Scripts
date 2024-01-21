@@ -6,24 +6,30 @@ using System.Windows.Forms;
 
 public class HatGlassesScript : Script
 {
-    bool hatsOn = false;
-    int currentHats = -1;
-    int myHats = -1;
-    int sgTexture = -1; // Hat texture index
-    bool hatsSet = false;
-    bool noHats = false;
+    private const Keys HatToggleKey = Keys.H;
+    private const Keys GlassesToggleKey = Keys.G;
+    private const int HatPropIndex = 0;
+    private const int GlassesPropIndex = 1;
 
-    bool glassesOn = false;
-    int currentGlasses = -1;
-    int myGlasses = -1;
-    int sgTextureGlasses = -1; // Glasses texture index
-    bool glassesSet = false;
-    bool noGlasses = false;
+    private bool hatsOn = false;
+    private int currentHats = -1;
+    private int myHats = -1;
+    private int sgTexture = -1;
+    private bool hatsSet = false;
+    private bool noHats = false;
+
+    private bool glassesOn = false;
+    private int currentGlasses = -1;
+    private int myGlasses = -1;
+    private int sgTextureGlasses = -1;
+    private bool glassesSet = false;
+    private bool noGlasses = false;
 
     public HatGlassesScript()
     {
         Tick += OnTick;
         KeyDown += OnKeyUp;
+        LoadAnimations();
     }
 
     private void OnTick(object sender, EventArgs e)
@@ -33,11 +39,11 @@ public class HatGlassesScript : Script
 
     private void OnKeyUp(object sender, KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.H)
+        if (e.KeyCode == HatToggleKey)
         {
             HatsEventHandler();
         }
-        else if (e.KeyCode == Keys.G)
+        else if (e.KeyCode == GlassesToggleKey)
         {
             SunglassesEventHandler();
         }
@@ -46,7 +52,7 @@ public class HatGlassesScript : Script
     private void HatsEventHandler()
     {
         Ped player = Game.Player.Character;
-        currentHats = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, 0);
+        currentHats = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, HatPropIndex);
 
         if (currentHats == -1 && !hatsSet)
         {
@@ -55,8 +61,8 @@ public class HatGlassesScript : Script
         }
         else if (currentHats != -1 && !hatsSet)
         {
-            myHats = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, 0);
-            sgTexture = Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, player, 0);
+            myHats = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, HatPropIndex);
+            sgTexture = Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, player, HatPropIndex);
             noHats = false;
             hatsSet = true;
             hatsOn = true;
@@ -67,8 +73,8 @@ public class HatGlassesScript : Script
         }
         else if (hatsSet && currentHats != -1 && myHats != currentHats)
         {
-            myHats = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, 0);
-            sgTexture = Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, player, 0);
+            myHats = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, HatPropIndex);
+            sgTexture = Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, player, HatPropIndex);
             hatsSet = true;
             noHats = false;
             hatsOn = true;
@@ -82,14 +88,14 @@ public class HatGlassesScript : Script
             if (hatsOn)
             {
                 Wait(1200); // Adjust the time as needed
-                Function.Call(Hash.SET_PED_PROP_INDEX, player, 0, myHats, sgTexture, 2);
-                ShowNotification("Hat is on");
+                Function.Call(Hash.SET_PED_PROP_INDEX, player, HatPropIndex, myHats, sgTexture, 2);
+                //ShowNotification("Hat is on");
             }
             else
             {
                 Wait(500); // Adjust the time as needed
-                Function.Call(Hash.CLEAR_PED_PROP, player, 0);
-                ShowNotification("Hat is off");
+                Function.Call(Hash.CLEAR_PED_PROP, player, HatPropIndex);
+                //ShowNotification("Hat is off");
             }
         }
         else
@@ -101,7 +107,7 @@ public class HatGlassesScript : Script
     private void SunglassesEventHandler()
     {
         Ped player = Game.Player.Character;
-        currentGlasses = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, 1);
+        currentGlasses = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, GlassesPropIndex);
 
         if (currentGlasses == -1 && !glassesSet)
         {
@@ -110,8 +116,8 @@ public class HatGlassesScript : Script
         }
         else if (currentGlasses != -1 && !glassesSet)
         {
-            myGlasses = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, 1);
-            sgTextureGlasses = Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, player, 1);
+            myGlasses = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, GlassesPropIndex);
+            sgTextureGlasses = Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, player, GlassesPropIndex);
             noGlasses = false;
             glassesSet = true;
             glassesOn = true;
@@ -122,8 +128,8 @@ public class HatGlassesScript : Script
         }
         else if (glassesSet && currentGlasses != -1 && myGlasses != currentGlasses)
         {
-            myGlasses = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, 1);
-            sgTextureGlasses = Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, player, 1);
+            myGlasses = Function.Call<int>(Hash.GET_PED_PROP_INDEX, player, GlassesPropIndex);
+            sgTextureGlasses = Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, player, GlassesPropIndex);
             glassesSet = true;
             noGlasses = false;
             glassesOn = true;
@@ -136,15 +142,15 @@ public class HatGlassesScript : Script
             PlayAnimation(player, glassesOn ? "clothingspecs" : "clothingspecs", glassesOn ? "put_on" : "take_off");
             if (glassesOn)
             {
-                Wait(3400); // Adjust the time as needed
-                Function.Call(Hash.SET_PED_PROP_INDEX, player, 1, myGlasses, sgTextureGlasses, 2);
-                ShowNotification("Glasses are on");
+                Wait(3200); // Adjust the time as needed
+                Function.Call(Hash.SET_PED_PROP_INDEX, player, GlassesPropIndex, myGlasses, sgTextureGlasses, 2);
+                //ShowNotification("Glasses are on");
             }
             else
             {
                 Wait(1000); // Adjust the time as needed
-                Function.Call(Hash.CLEAR_PED_PROP, player, 1);
-                ShowNotification("Glasses are off");
+                Function.Call(Hash.CLEAR_PED_PROP, player, GlassesPropIndex);
+                //ShowNotification("Glasses are off");
             }
         }
         else
@@ -153,7 +159,25 @@ public class HatGlassesScript : Script
         }
     }
 
-    // Function to show the notification
+    private void LoadAnimations()
+    {
+        LoadAnimationDictionary("missheistdockssetup1hardhat@");
+        LoadAnimationDictionary("missheist_agency2ahelmet");
+        LoadAnimationDictionary("clothingspecs");
+    }
+
+    private void LoadAnimationDictionary(string dictionary)
+    {
+        if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
+        {
+            Function.Call(Hash.REQUEST_ANIM_DICT, dictionary);
+            while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
+            {
+                Wait(100);
+            }
+        }
+    }
+
     private void ShowNotification(string text)
     {
         Function.Call(Hash._SET_NOTIFICATION_TEXT_ENTRY, "STRING");
@@ -161,79 +185,14 @@ public class HatGlassesScript : Script
         Function.Call(Hash._DRAW_NOTIFICATION, false, false);
     }
 
- //Function to play an animation
-   private void PlayAnimation(Entity entity, string animDict, string animName)
-   {
-       if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
-       {
-           Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
-           while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
-           {
-               Wait(100);
-           }
-       }
+    private void PlayAnimation(Entity entity, string animDict, string animName)
+    {
+        if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
+        {
+            // Log an error here if the animation dictionary is not loaded.
+            return;
+        }
 
-Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 48, 0, false, false, false);
+        Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 48, 0, false, false, false);
     }
 }
-
-
-
-
-
-
-//void TaskPlayAnim(int /* Ped */ ped, string animDictionary, string animationName, float blendInSpeed, float blendOutSpeed, int duration, int flag, float playbackRate, bool lockX, bool lockY, bool lockZ);
-
-//   private void PlayAnimation(Entity entity, string animDict, string animName)
-//   {
-//       if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
-//       {
-//           Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
-//           while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
-//           {
-//               Wait(100);
-//           }
-//       }
-
-//Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 48, 0, false, false, false);
-//    }
-//}
-
-
-
-
-//void TaskPlayAnimAdvanced(int /* Ped */ ped, string animDict, string animName, float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float animEnterSpeed, float animExitSpeed, int duration, Any flag, float animTime, Any p14, Any p15);
-
-//    private void PlayAnimation(Entity entity, string animDict, string animName)
-//    {
-//        if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
-//        {
-//            Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
-//            while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
-//            {
-//                Wait(100);
-//            }
-//        }
-
-//        Vector3 playerCoords = Game.Player.Character.Position;
-//        float playerHeading = Game.Player.Character.Heading;
-
-//        Function.Call(Hash.TASK_PLAY_ANIM_ADVANCED,
-//            entity.Handle,
-//            animDict,
-//            animName,
-//            playerCoords.X,
-//            playerCoords.Y,
-//            playerCoords.Z,
-//            0.0f,
-//            0.0f,
-//            playerHeading,
-//            1.0f,
-//            1.0f,
-//            1.0f,
-//            40,
-//            0.5f,
-//            0,
-//            0
-//        );
-//    }

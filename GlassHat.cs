@@ -89,13 +89,13 @@ public class HatGlassesScript : Script
             {
                 Wait(1200); // Adjust the time as needed
                 Function.Call(Hash.SET_PED_PROP_INDEX, player, HatPropIndex, myHats, sgTexture, 2);
-                //ShowNotification("Hat is on");
+                ShowNotification("Hat is on");
             }
             else
             {
                 Wait(500); // Adjust the time as needed
                 Function.Call(Hash.CLEAR_PED_PROP, player, HatPropIndex);
-                //ShowNotification("Hat is off");
+                ShowNotification("Hat is off");
             }
         }
         else
@@ -144,13 +144,13 @@ public class HatGlassesScript : Script
             {
                 Wait(3200); // Adjust the time as needed
                 Function.Call(Hash.SET_PED_PROP_INDEX, player, GlassesPropIndex, myGlasses, sgTextureGlasses, 2);
-                //ShowNotification("Glasses are on");
+                ShowNotification("Glasses are on");
             }
             else
             {
                 Wait(1000); // Adjust the time as needed
                 Function.Call(Hash.CLEAR_PED_PROP, player, GlassesPropIndex);
-                //ShowNotification("Glasses are off");
+                ShowNotification("Glasses are off");
             }
         }
         else
@@ -180,9 +180,7 @@ public class HatGlassesScript : Script
 
     private void ShowNotification(string text)
     {
-        Function.Call(Hash._SET_NOTIFICATION_TEXT_ENTRY, "STRING");
-        Function.Call(Hash._ADD_TEXT_COMPONENT_STRING, text);
-        Function.Call(Hash._DRAW_NOTIFICATION, false, false);
+        GTA.UI.Notification.Show(text);
     }
 
     private void PlayAnimation(Entity entity, string animDict, string animName)

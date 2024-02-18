@@ -38,7 +38,7 @@ public class DumpsterMod : Script
     {
         if (isInsideDumpster)
         {
-            Function.Call(Hash.SET_FOLLOW_PED_CAM_VIEW_MODE, 0);
+            Function.Call(Hash.SET_FOLLOW_PED_CAM_VIEW_MODE, 2);
         }
     }
 
@@ -92,9 +92,9 @@ public class DumpsterMod : Script
     private void PlayDumpsterEnterAnimation()
     {
 
-        Game.Player.Character.Task.PlayAnimation("move_climb", "standclimbup_80_angled_20", 1.0f, -1, (AnimationFlags)512);
+        Game.Player.Character.Task.PlayAnimation("move_climb", "standclimbup_80", 1.0f, -1, (AnimationFlags)512);
 
-        Wait(1200);
+        Wait(700);
 
         dumpster.IsCollisionEnabled = false;
 
@@ -105,7 +105,7 @@ public class DumpsterMod : Script
 
         Game.Player.Character.Task.Cower(-1);
 
-        Wait(800);
+        Wait(500);
 
         Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, false);
 
@@ -118,7 +118,8 @@ public class DumpsterMod : Script
         currentDumpster = null;
 
         Game.Player.Character.Task.ClearAll();
-        dumpster.IsCollisionEnabled = true;
+        dumpster.IsCollisionEnabled = false;
+        Wait(2000);
         Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, true);
         Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false);
         Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false);
@@ -127,10 +128,10 @@ public class DumpsterMod : Script
 
     private void PlayDumpsterExitAnimation()
     {
-        Game.Player.Character.Task.PlayAnimation("move_climb", "standclimbup_80_angled_20", 1.0f, -1, (AnimationFlags)512);
-
-        Wait(1200);
-
+        Game.Player.Character.Task.PlayAnimation("move_climb", "standclimbup_80", 1.0f, -1, (AnimationFlags)512);
+ 
+        Wait(700);
+      dumpster.IsCollisionEnabled = true;
         // Teleport player back to their original position
         Game.Player.Character.Position = originalPlayerPosition;
 

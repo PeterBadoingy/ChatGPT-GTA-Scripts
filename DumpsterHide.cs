@@ -85,7 +85,6 @@ public class DumpsterMod : Script
         // Play the dumpster enter animation
         PlayDumpsterEnterAnimation();
 
-        Function.Call(Hash.SET_PLAYER_TARGETING_MODE, 2);
         Function.Call(Hash.FORCE_START_HIDDEN_EVASION, Game.Player.Character);
         Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true);
         Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true);

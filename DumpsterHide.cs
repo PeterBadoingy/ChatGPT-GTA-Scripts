@@ -85,9 +85,6 @@ public class DumpsterMod : Script
         // Play the dumpster enter animation
         PlayDumpsterEnterAnimation();
 
-        Function.Call(Hash.FORCE_START_HIDDEN_EVASION, Game.Player.Character);
-        Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true);
-        Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true);
     }
 
     private void PlayDumpsterEnterAnimation()
@@ -112,6 +109,8 @@ public class DumpsterMod : Script
 
         Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, false);
 
+        Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true);
+        Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true);
     }
 
     private void ExitDumpster()
@@ -122,9 +121,9 @@ public class DumpsterMod : Script
         Game.Player.Character.Task.ClearAll();
         dumpster.IsCollisionEnabled = false;
         Wait(2000);
+
         Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, true);
-        Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false);
-        Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false);
+
         PlayDumpsterExitAnimation();
     }
 
@@ -134,6 +133,9 @@ public class DumpsterMod : Script
  
         Wait(800);
       dumpster.IsCollisionEnabled = true;
+
+        Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false);
+        Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true);
         // Teleport player back to their original position
         Game.Player.Character.Position = originalPlayerPosition;
 

@@ -135,7 +135,7 @@ public class DumpsterMod : Script
       dumpster.IsCollisionEnabled = true;
 
         Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false);
-        Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true);
+        Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false);
         // Teleport player back to their original position
         Game.Player.Character.Position = originalPlayerPosition;
 

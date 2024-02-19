@@ -102,6 +102,7 @@ public class HatGlassesScript : Script
         else
         {
             //ShowNotification("You are not wearing a Hat");
+			hatsOn = false;
         }
     }
 
@@ -157,6 +158,7 @@ public class HatGlassesScript : Script
         else
         {
             //ShowNotification("You are not wearing Glasses");
+			glassesOn = false;
         }
     }
 

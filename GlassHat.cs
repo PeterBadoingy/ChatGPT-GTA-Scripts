@@ -3,6 +3,7 @@ using GTA;
 using GTA.Native;
 using GTA.Math;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 public class HatGlassesScript : Script
 {
@@ -89,18 +90,18 @@ public class HatGlassesScript : Script
             {
                 Wait(1200); // Adjust the time as needed
                 Function.Call(Hash.SET_PED_PROP_INDEX, player, HatPropIndex, myHats, sgTexture, 2);
-                ShowNotification("Hat is on");
+                //ShowNotification("Hat is on");
             }
             else
             {
                 Wait(500); // Adjust the time as needed
                 Function.Call(Hash.CLEAR_PED_PROP, player, HatPropIndex);
-                ShowNotification("Hat is off");
+                //ShowNotification("Hat is off");
             }
         }
         else
         {
-            ShowNotification("You are not wearing a Hat");
+            //ShowNotification("You are not wearing a Hat");
         }
     }
 
@@ -144,18 +145,18 @@ public class HatGlassesScript : Script
             {
                 Wait(3200); // Adjust the time as needed
                 Function.Call(Hash.SET_PED_PROP_INDEX, player, GlassesPropIndex, myGlasses, sgTextureGlasses, 2);
-                ShowNotification("Glasses are on");
+                //ShowNotification("Glasses are on");
             }
             else
             {
                 Wait(1000); // Adjust the time as needed
                 Function.Call(Hash.CLEAR_PED_PROP, player, GlassesPropIndex);
-                ShowNotification("Glasses are off");
+                //ShowNotification("Glasses are off");
             }
         }
         else
         {
-            ShowNotification("You are not wearing Glasses");
+            //ShowNotification("You are not wearing Glasses");
         }
     }
 
@@ -166,22 +167,23 @@ public class HatGlassesScript : Script
         LoadAnimationDictionary("clothingspecs");
     }
 
-    private void LoadAnimationDictionary(string dictionary)
+private async void LoadAnimationDictionary(string dictionary)
+{
+    if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
     {
-        if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
+        Function.Call(Hash.REQUEST_ANIM_DICT, dictionary);
+        await Task.Delay(100); // Asynchronously wait for 100 milliseconds
+        while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
         {
-            Function.Call(Hash.REQUEST_ANIM_DICT, dictionary);
-            while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
-            {
-                Wait(100);
-            }
+            await Task.Delay(100); // Asynchronously wait for 100 milliseconds
         }
     }
+}
 
-    private void ShowNotification(string text)
-    {
-        GTA.UI.Notification.Show(text);
-    }
+private void ShowNotification(string text)
+{
+    GTA.UI.Notification.Show(text);
+}
 
     private void PlayAnimation(Entity entity, string animDict, string animName)
     {

@@ -67,28 +67,8 @@ public class FacialAnims : Script
         // Display current facial animation caption if showDisplay is true
         if (showDisplay)
         {
-            Function.Call(Hash._SET_TEXT_ENTRY, "STRING");
-            Function.Call(Hash._ADD_TEXT_COMPONENT_STRING, "Facial Expression: " + GetCaption(currentFacialAnim));
-            Function.Call(Hash.SET_TEXT_SCALE, 0.3f, 0.3f);
-
-            // Draw the text with an outline
-            DrawTextWithOutline(0.3f, 0.03f, textColor.R, textColor.G, textColor.B, textColor.A, 204, 141, 16, 255);
-
-            Function.Call(Hash.SET_TEXT_DROPSHADOW, 0, 0, 0, 0, 0);
+            GTA.UI.Screen.ShowSubtitle("Facial Expression: " + GetCaption(currentFacialAnim), 500);
         }
-    }
-
-    // Function to draw text with an outline
-    private void DrawTextWithOutline(float x, float y, int r, int g, int b, int a, int outlineR, int outlineG, int outlineB, int outlineA)
-    {
-        Function.Call(Hash.SET_TEXT_COLOUR, outlineR, outlineG, outlineB, outlineA);
-        Function.Call(Hash._DRAW_TEXT, x + 0.002f, y + 0.002f);
-        Function.Call(Hash._DRAW_TEXT, x + 0.002f, y - 0.002f);
-        Function.Call(Hash._DRAW_TEXT, x - 0.002f, y + 0.002f);
-        Function.Call(Hash._DRAW_TEXT, x - 0.002f, y - 0.002f);
-
-        Function.Call(Hash.SET_TEXT_COLOUR, r, g, b, a);
-        Function.Call(Hash._DRAW_TEXT, x, y);
     }
 
     // Function called when a key is pressed

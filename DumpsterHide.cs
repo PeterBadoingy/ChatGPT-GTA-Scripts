@@ -38,7 +38,7 @@ public class DumpsterMod : Script
     {
         if (isInsideDumpster)
         {
-            //Function.Call(Hash.SET_FOLLOW_PED_CAM_VIEW_MODE, 2);
+            // Function.Call(Hash.SET_FOLLOW_PED_CAM_VIEW_MODE, 2);
         }
     }
 
@@ -53,6 +53,22 @@ public class DumpsterMod : Script
                 EnterDumpster(nearbyDumpster);
                 return;
             }
+        }
+    }
+
+    private void HandlePlayerVisibilityAndAttention()
+    {
+        if (isInsideDumpster)
+        {
+            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true);
+            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true);
+            Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, false);
+        }
+        else
+        {
+            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false);
+            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false);
+            Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, true);
         }
     }
 
@@ -78,18 +94,17 @@ public class DumpsterMod : Script
 
         // Calculate the entry position in front of the dumpster
         Vector3 entryPosition = dumpster.Position + dumpster.ForwardVector * -1.2f; // Adjust distance as needed
+        entryPosition += dumpster.UpVector * 0.2f; // Adjust height as needed
 
         // Teleport the player to the entry position
         Game.Player.Character.Position = entryPosition;
 
         // Play the dumpster enter animation
         PlayDumpsterEnterAnimation();
-
     }
 
     private void PlayDumpsterEnterAnimation()
     {
-
         Game.Player.Character.Task.PlayAnimation("move_climb", "standclimbup_80", 1.0f, -1, (AnimationFlags)512);
 
         Wait(800);
@@ -103,14 +118,12 @@ public class DumpsterMod : Script
 
         Game.Player.Character.Task.Cower(-1);
 
+        Wait(800);
+
+        // Call HandlePlayerVisibilityAndAttention() to make the player invisible and ignore by police
+        HandlePlayerVisibilityAndAttention();
+
         dumpster.IsCollisionEnabled = true;
-
-        Wait(500);
-
-        Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, false);
-
-        Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true);
-        Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true);
     }
 
     private void ExitDumpster()
@@ -119,10 +132,9 @@ public class DumpsterMod : Script
         currentDumpster = null;
 
         Game.Player.Character.Task.ClearAll();
-        dumpster.IsCollisionEnabled = false;
-        Wait(2000);
-
-        Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, true);
+        Wait(1500);
+        // Call HandlePlayerVisibilityAndAttention() to make the player visible and reset police attention
+        HandlePlayerVisibilityAndAttention();
 
         PlayDumpsterExitAnimation();
     }
@@ -130,15 +142,11 @@ public class DumpsterMod : Script
     private void PlayDumpsterExitAnimation()
     {
         Game.Player.Character.Task.PlayAnimation("move_climb", "standclimbup_80", 1.0f, -1, (AnimationFlags)512);
- 
-        Wait(800);
-      dumpster.IsCollisionEnabled = true;
 
-        Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false);
-        Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false);
+        Wait(900);
+
         // Teleport player back to their original position
         Game.Player.Character.Position = originalPlayerPosition;
-
     }
 }
 

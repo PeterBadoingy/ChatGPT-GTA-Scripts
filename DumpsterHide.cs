@@ -38,7 +38,9 @@ public class DumpsterMod : Script
     {
         if (isInsideDumpster)
         {
-            // Function.Call(Hash.SET_FOLLOW_PED_CAM_VIEW_MODE, 2);
+            // Do a little Dance;
+            // Roll a little Spliff;
+            // Let's Get High Tonight, Get High Tonight;
         }
     }
 
@@ -60,15 +62,15 @@ public class DumpsterMod : Script
     {
         if (isInsideDumpster)
         {
-            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true);
-            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true);
-            Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, false);
+            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true); // No Effect
+            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true); // No Effect
+            Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, false); // This works
         }
         else
         {
-            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false);
-            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false);
-            Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, true);
+            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false); // No Effect
+            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false); // No Effect
+            Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, true); // This works
         }
     }
 
@@ -120,7 +122,6 @@ public class DumpsterMod : Script
 
         Wait(800);
 
-        // Call HandlePlayerVisibilityAndAttention() to make the player invisible and ignore by police
         HandlePlayerVisibilityAndAttention();
 
         dumpster.IsCollisionEnabled = true;
@@ -133,7 +134,7 @@ public class DumpsterMod : Script
 
         Game.Player.Character.Task.ClearAll();
         Wait(1500);
-        // Call HandlePlayerVisibilityAndAttention() to make the player visible and reset police attention
+ 
         HandlePlayerVisibilityAndAttention();
 
         PlayDumpsterExitAnimation();

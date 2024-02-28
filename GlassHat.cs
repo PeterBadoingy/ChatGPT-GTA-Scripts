@@ -85,16 +85,17 @@ public class HatGlassesScript : Script
         if (!noHats)
         {
             hatsOn = !hatsOn;
-            PlayAnimation(player, hatsOn ? "missheistdockssetup1hardhat@" : "missheist_agency2ahelmet", hatsOn ? "put_on_hat" : "take_off_helmet_stand");
+            PlayAnimation(player, hatsOn ? "missheistdockssetup1hardhat@" : "missheist_agency2ahelmet", 
+                          hatsOn ? "put_on_hat" : "take_off_helmet_stand", hatsOn ? 0.15f : 0.7f, hatsOn ? 1000 : 1000); // Adjust animTime and duration as needed
             if (hatsOn)
             {
-                Wait(1200); // Adjust the time as needed
+                Wait(100); // Adjust the time as needed
                 Function.Call(Hash.SET_PED_PROP_INDEX, player, HatPropIndex, myHats, sgTexture, 2);
                 //ShowNotification("Hat is on");
             }
             else
             {
-                Wait(500); // Adjust the time as needed
+                Wait(100); // Adjust the time as needed
                 Function.Call(Hash.CLEAR_PED_PROP, player, HatPropIndex);
                 //ShowNotification("Hat is off");
             }
@@ -102,7 +103,7 @@ public class HatGlassesScript : Script
         else
         {
             //ShowNotification("You are not wearing a Hat");
-			hatsOn = false;
+            hatsOn = false;
         }
     }
 
@@ -141,16 +142,17 @@ public class HatGlassesScript : Script
         if (!noGlasses)
         {
             glassesOn = !glassesOn;
-            PlayAnimation(player, glassesOn ? "clothingspecs" : "clothingspecs", glassesOn ? "put_on" : "take_off");
+            PlayAnimation(player, glassesOn ? "clothingspecs" : "clothingspecs", 
+                          glassesOn ? "put_on" : "take_off", glassesOn ? 0.5f : 0.0f, glassesOn ? 1000 : 1000); // Adjust animTime and duration as needed
             if (glassesOn)
             {
-                Wait(3200); // Adjust the time as needed
+                Wait(100); // Adjust the time as needed
                 Function.Call(Hash.SET_PED_PROP_INDEX, player, GlassesPropIndex, myGlasses, sgTextureGlasses, 2);
                 //ShowNotification("Glasses are on");
             }
             else
             {
-                Wait(1000); // Adjust the time as needed
+                Wait(200); // Adjust the time as needed
                 Function.Call(Hash.CLEAR_PED_PROP, player, GlassesPropIndex);
                 //ShowNotification("Glasses are off");
             }
@@ -158,7 +160,7 @@ public class HatGlassesScript : Script
         else
         {
             //ShowNotification("You are not wearing Glasses");
-			glassesOn = false;
+            glassesOn = false;
         }
     }
 
@@ -169,25 +171,25 @@ public class HatGlassesScript : Script
         LoadAnimationDictionary("clothingspecs");
     }
 
-private async void LoadAnimationDictionary(string dictionary)
-{
-    if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
+    private async void LoadAnimationDictionary(string dictionary)
     {
-        Function.Call(Hash.REQUEST_ANIM_DICT, dictionary);
-        await Task.Delay(100); // Asynchronously wait for 100 milliseconds
-        while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
+        if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
         {
+            Function.Call(Hash.REQUEST_ANIM_DICT, dictionary);
             await Task.Delay(100); // Asynchronously wait for 100 milliseconds
+            while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
+            {
+                await Task.Delay(100); // Asynchronously wait for 100 milliseconds
+            }
         }
     }
-}
 
-private void ShowNotification(string text)
-{
-    GTA.UI.Notification.Show(text);
-}
+    private void ShowNotification(string text)
+    {
+        GTA.UI.Notification.Show(text);
+    }
 
-    private void PlayAnimation(Entity entity, string animDict, string animName)
+    private void PlayAnimation(Entity entity, string animDict, string animName, float animTime, int duration)
     {
         if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
         {
@@ -195,6 +197,10 @@ private void ShowNotification(string text)
             return;
         }
 
-        Function.Call(Hash.TASK_PLAY_ANIM, entity.Handle, animDict, animName, 8.0f, -8.0f, -1, 48, 0, false, false, false);
+        Function.Call(Hash.TASK_PLAY_ANIM_ADVANCED, entity.Handle, animDict, animName,
+                      entity.Position.X, entity.Position.Y, entity.Position.Z,
+                      0.0f, 0.0f, entity.Heading, 1.0f, 1.0f, duration, 49, animTime, 0, 0);
+        Wait(duration); // Wait for the specified duration before continuing
+    
     }
 }

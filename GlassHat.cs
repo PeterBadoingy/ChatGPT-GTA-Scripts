@@ -164,6 +164,11 @@ public class HatGlassesScript : Script
         }
     }
 
+    private void ShowNotification(string text)
+    {
+        GTA.UI.Notification.Show(text);
+    }
+
     private void LoadAnimations()
     {
         LoadAnimationDictionary("missheistdockssetup1hardhat@");
@@ -182,11 +187,6 @@ public class HatGlassesScript : Script
                 await Task.Delay(100); // Asynchronously wait for 100 milliseconds
             }
         }
-    }
-
-    private void ShowNotification(string text)
-    {
-        GTA.UI.Notification.Show(text);
     }
 
     private void PlayAnimation(Entity entity, string animDict, string animName, float animTime, int duration)

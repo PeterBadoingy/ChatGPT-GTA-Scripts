@@ -65,12 +65,13 @@ public class DumpsterMod : Script
             Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true); // No Effect
             Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true); // No Effect
             Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, false); // This works
+            Function.Call(Hash.IS_ENTITY_ON_SCREEN, Game.Player.Character, false); // This ???
         }
         else
         {
-            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, false); // No Effect
             Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false); // No Effect
             Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, true); // This works
+            Function.Call(Hash.IS_ENTITY_ON_SCREEN, Game.Player.Character, true); // This ???
         }
     }
 

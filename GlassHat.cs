@@ -258,10 +258,10 @@ public class HatGlassesMaskScript : Script
         if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
         {
             Function.Call(Hash.REQUEST_ANIM_DICT, dictionary);
-            Wait(100); // Asynchronously wait for 100 milliseconds
-            while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
+            //Wait(100); // Asynchronously wait for 100 milliseconds
+            //while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, dictionary))
             {
-                Wait(100); // Asynchronously wait for 100 milliseconds
+                //Wait(100); // Asynchronously wait for 100 milliseconds
             }
         }
     }

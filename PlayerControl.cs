@@ -1,5 +1,3 @@
-//  = Quick Hotkeys for Animations = Numpad 1-9 = * to enable/disable =
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,15 +9,15 @@ using GTA.Native;
 public class AnimationScript : Script
 {
     private bool scriptEnabled = true;
-    private bool animationPlaying = false; // Track if an animation is currently playing
-    private int currentAnimationIndex = -1; // Track the index of the current animation
+    private bool animationPlaying = false;
+    private int currentAnimationIndex = -1;
     private Dictionary<int, Dictionary<string, string>> animationData;
 
     public AnimationScript()
     {
         animationData = new Dictionary<int, Dictionary<string, string>>();
         LoadAnimationData("animation_data.ini");
-        
+
         Tick += OnTick;
         KeyDown += OnKeyDown;
     }
@@ -72,7 +70,7 @@ public class AnimationScript : Script
 
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.Multiply) // Numpad * key
+        if (e.KeyCode == Keys.Multiply)
         {
             scriptEnabled = !scriptEnabled;
             NotifyScriptStatus("Hotkeys " + (scriptEnabled ? "Enabled" : "Disabled"));
@@ -84,7 +82,6 @@ public class AnimationScript : Script
                 int animationIndex = (int)(e.KeyCode - Keys.NumPad1) + 1;
                 if (animationPlaying && currentAnimationIndex == animationIndex)
                 {
-                    // If the animation is playing and the same key is pressed again, cancel the animation
                     CancelAnimation();
                 }
                 else
@@ -95,55 +92,45 @@ public class AnimationScript : Script
         }
     }
 
-    private void PlayAnimation(int index)
+private void PlayAnimation(int index)
+{
+    if (animationData.ContainsKey(index))
     {
-        if (animationData.ContainsKey(index))
+        Dictionary<string, string> animInfo = animationData[index];
+        string animationDictionary = animInfo["AnimationDictionary"];
+        string animationName = animInfo["AnimationName"];
+        bool setRepeat = bool.Parse(animInfo.ContainsKey("SetRepeat") ? animInfo["SetRepeat"] : "false");
+        int isWholeBodyFlag = int.Parse(animInfo.ContainsKey("IsWholeBodyFlag") ? animInfo["IsWholeBodyFlag"] : "0");
+        int upperBodyOnlyFlag = int.Parse(animInfo.ContainsKey("UpperBodyOnlyFlag") ? animInfo["UpperBodyOnlyFlag"] : "0");
+
+        Function.Call(Hash.REQUEST_ANIM_DICT, animationDictionary);
+
+        if (Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animationDictionary))
         {
-            Dictionary<string, string> animInfo = animationData[index];
-            string animationDictionary = animInfo["AnimationDictionary"];
-            string animationName = animInfo["AnimationName"];
-            bool setRepeat = bool.Parse(animInfo.ContainsKey("SetRepeat") ? animInfo["SetRepeat"] : "false");
-            bool isWholeBody = bool.Parse(animInfo.ContainsKey("IsWholeBody") ? animInfo["IsWholeBody"] : "false");
-            bool upperBodyOnly = bool.Parse(animInfo.ContainsKey("UpperBodyOnly") ? animInfo["UpperBodyOnly"] : "false");
+            int flags = 1835009;
+            if (setRepeat) flags |= 1;
+            if (isWholeBodyFlag != 0) flags |= isWholeBodyFlag;
+            if (upperBodyOnlyFlag != 0) flags |= upperBodyOnlyFlag;
 
-            // Request the animation dictionary
-            Function.Call(Hash.REQUEST_ANIM_DICT, animationDictionary);
+            Function.Call(Hash.TASK_PLAY_ANIM, Game.Player.Character.Handle, animationDictionary, animationName, 5f, -5f, -1, flags, 0, false, false, false);
 
-            // Check if the animation dictionary is loaded
-            if (Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animationDictionary))
-            {
-                // Play the animation
-                int flags = 0;
-                if (setRepeat) flags |= 1;
-                if (isWholeBody) flags |= 15;
-                if (upperBodyOnly) flags |= 49;
-                
-                Function.Call(Hash.TASK_PLAY_ANIM, Game.Player.Character.Handle, animationDictionary, animationName, 5f, -5f, -1, flags, 0, false, false, false);
-                
-                // Notify that the animation is being played
-                //NotifyScriptStatus("Playing Animation: " + animInfo["Name"]);
-                
-                animationPlaying = true;
-                currentAnimationIndex = index;
-            }
-            else
-            {
-                // Notify if the animation dictionary failed to load
-                //NotifyScriptStatus("Failed to load animation dictionary: " + animationDictionary);
-            }
+            animationPlaying = true;
+            currentAnimationIndex = index;
         }
         else
         {
-            // Notify if the animation index is not found
-            //NotifyScriptStatus("Animation not found for index: " + index);
+            //NotifyScriptStatus("Failed to load animation dictionary: " + animationDictionary);
         }
     }
+    else
+    {
+        //NotifyScriptStatus("Animation not found for index: " + index);
+    }
+}
 
     private void CancelAnimation()
     {
         Function.Call(Hash.CLEAR_PED_TASKS, Game.Player.Character.Handle);
-        //NotifyScriptStatus("Animation Canceled");
-        
         animationPlaying = false;
         currentAnimationIndex = -1;
     }

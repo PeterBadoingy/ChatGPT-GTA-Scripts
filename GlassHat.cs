@@ -9,7 +9,7 @@ public class HatGlassesMaskScript : Script
 {
     private const Keys HatToggleKey = Keys.H;
     private const Keys GlassesToggleKey = Keys.G;
-    private const Keys MaskToggleKey = Keys.J;
+    private const Keys MaskToggleKey = Keys.M;
     private const int HatPropIndex = 0;
     private const int GlassesPropIndex = 1;
     private const int MaskCompIndex = 1;
@@ -178,7 +178,10 @@ public class HatGlassesMaskScript : Script
         }
     }
 
-    private void MaskEventHandler()  // Requires another Function setup to handle HeadBlendData to shrink head and hide hair for masks. "SHRINK_HEAD".
+     // Mask Requires an additional function to Shrink players head features to fit the mask.
+     // DoesShopPedApparelHaveRestrictionTag , `SHRINK_HEAD` , HeadBlendData
+
+    private void MaskEventHandler()
     {
         Ped player = Game.Player.Character;
         currentMask = Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, player, MaskCompIndex);
@@ -216,7 +219,7 @@ public class HatGlassesMaskScript : Script
             if (maskOn)
             {
                 // Play animation for putting on the mask
-                PlayAnimation(player, "mp_masks@on_foot", "put_on_mask", 0.15f, 1000); // Adjust animTime and duration as needed
+                PlayAnimation(player, "mp_masks@on_foot", "put_on_mask", 0.3f, 1000); // Adjust animTime and duration as needed
 
                 // Set the mask on (assuming DrawableID: 51)
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, player, MaskCompIndex, drawMaskID, maskTextureID, 0);

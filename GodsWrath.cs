@@ -82,6 +82,9 @@ public class GodsWrath : Script
         // Apply fire effect
         Function.Call(Hash.START_ENTITY_FIRE, npc.Handle);
 
+        // Play animation
+        Function.Call(Hash.TASK_PLAY_ANIM, npc.Handle, "reaction@shove", "shoved_back", 8.0f, -8.0f, -1, 0, 0, false, false, false);
+
         Wait(2000);
     }
 }

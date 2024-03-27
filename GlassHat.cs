@@ -178,7 +178,7 @@ public class HatGlassesMaskScript : Script
         }
     }
 
-    private void MaskEventHandler()
+    private void MaskEventHandler()  // Requires another Function setup to handle HeadBlendData to shrink head and hide hair for masks. "SHRINK_HEAD".
     {
         Ped player = Game.Player.Character;
         currentMask = Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, player, MaskCompIndex);

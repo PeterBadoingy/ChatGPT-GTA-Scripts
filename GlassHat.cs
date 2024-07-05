@@ -33,8 +33,8 @@ public class HatGlassesMaskScript : Script
     private int myMask = -1;
     private bool maskSet = false;
     private bool noMask = false;
-    private int maskTextureID = 0; // Variable to store mask texture ID
-    private int drawMaskID = 0; // Variable to store mask drawable ID
+    private int maskTextureID = -1; // Variable to store mask texture ID
+    private int drawMaskID = -1; // Variable to store mask drawable ID
 
     public HatGlassesMaskScript()
     {
@@ -181,66 +181,72 @@ public class HatGlassesMaskScript : Script
      // Mask Requires an additional function to Shrink players head features to fit the mask.
      // DoesShopPedApparelHaveRestrictionTag , `SHRINK_HEAD` , HeadBlendData
 
-    private void MaskEventHandler()
+private void MaskEventHandler()
+{
+    Ped player = Game.Player.Character;
+    currentMask = Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, player, MaskCompIndex);
+
+    if (currentMask == -1)
     {
-        Ped player = Game.Player.Character;
-        currentMask = Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, player, MaskCompIndex);
+        ShowNotification("You are not wearing a mask");
+        return; // Exit the method early if the player doesn't have a mask equipped
+    }
 
+    if (currentMask != -1 && !maskSet)
+    {
+        myMask = currentMask;
+        maskTextureID = Function.Call<int>(Hash.GET_PED_TEXTURE_VARIATION, player, MaskCompIndex);
+        drawMaskID = Function.Call<int>(Hash.GET_PED_DRAWABLE_VARIATION, player, MaskCompIndex);
+        maskSet = true;
+        maskOn = true;
+        //ShowNotification("Mask Texture ID (Initial): " + maskTextureID);
+    }
+    else if (currentMask == -1 && maskSet)
+    {
+        maskOn = false;
+        maskSet = false; // Reset mask state if it's removed
+    }
+    else if (maskSet && currentMask != -1 && myMask != currentMask)
+    {
+        myMask = currentMask;
+        maskTextureID = Function.Call<int>(Hash.GET_PED_TEXTURE_VARIATION, player, MaskCompIndex);
+        drawMaskID = Function.Call<int>(Hash.GET_PED_DRAWABLE_VARIATION, player, MaskCompIndex);
+        maskSet = false;
+        maskOn = true;
+        //ShowNotification("Mask Texture ID (Changed): " + maskTextureID);
+    }
 
-        if (currentMask != -1 && !maskSet)
+    // Toggle mask on/off
+    maskOn = !maskOn;
+
+    if (!noMask)
+    {
+        if (maskOn)
         {
-            myMask = currentMask;
-            maskTextureID = Function.Call<int>(Hash.GET_PED_TEXTURE_VARIATION, player, MaskCompIndex);
-            drawMaskID = Function.Call<int>(Hash.GET_PED_DRAWABLE_VARIATION, player, MaskCompIndex);
-            maskSet = true;
-            maskOn = true;
-            //ShowNotification("Mask Texture ID (Initial): " + maskTextureID);
-        }
-        else if (currentMask == -1 && maskSet)
-        {
-            maskOn = false;
-            maskSet = false; // Reset mask state if it's removed
-        }
-        else if (maskSet && currentMask != -1 && myMask != currentMask)
-        {
-            myMask = currentMask;
-            maskTextureID = Function.Call<int>(Hash.GET_PED_TEXTURE_VARIATION, player, MaskCompIndex);
-            drawMaskID = Function.Call<int>(Hash.GET_PED_DRAWABLE_VARIATION, player, MaskCompIndex);
-            maskSet = false;
-            maskOn = true;
-            //ShowNotification("Mask Texture ID (Changed): " + maskTextureID);
-        }
+            // Play animation for putting on the mask
+            PlayAnimation(player, "mp_masks@on_foot", "put_on_mask", 0.3f, 1000); // Adjust animTime and duration as needed
 
-        // Toggle mask on/off
-        maskOn = !maskOn;
-
-        if (!noMask)
-        {
-            if (maskOn)
-            {
-                // Play animation for putting on the mask
-                PlayAnimation(player, "mp_masks@on_foot", "put_on_mask", 0.3f, 1000); // Adjust animTime and duration as needed
-
-                // Set the mask on (assuming DrawableID: 51)
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, player, MaskCompIndex, drawMaskID, maskTextureID, 0);
-                //ShowNotification("Mask is on. Texture ID: " + maskTextureID);
-            }
-            else
-            {
-                // Play animation for taking off the mask
-                PlayAnimation(player, "missfbi4", "takeoff_mask", 0.7f, 1000); // Adjust animTime and duration as needed
-
-                // Remove the mask
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, player, MaskCompIndex, -1, 0, 0);
-                //ShowNotification("Mask is off");
-            }
+            // Set the mask on (assuming DrawableID: 51)
+            Function.Call(Hash.SET_PED_COMPONENT_VARIATION, player, MaskCompIndex, drawMaskID, maskTextureID, 0);
+            //ShowNotification("Mask is on. Texture ID: " + maskTextureID);
         }
         else
         {
-            //ShowNotification("You are not wearing a mask");
-            maskOn = false;
+            // Play animation for taking off the mask
+            PlayAnimation(player, "missfbi4", "takeoff_mask", 0.7f, 1000); // Adjust animTime and duration as needed
+
+            // Remove the mask
+            Function.Call(Hash.SET_PED_COMPONENT_VARIATION, player, MaskCompIndex, -1, 0, 0);
+            //ShowNotification("Mask is off");
         }
     }
+    else
+    {
+        //ShowNotification("You are not wearing a mask");
+        maskOn = false;
+    }
+}
+
 
     private void ShowNotification(string text)
     {

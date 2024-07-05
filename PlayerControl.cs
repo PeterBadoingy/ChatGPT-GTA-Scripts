@@ -107,12 +107,37 @@ private void PlayAnimation(int index)
 
         if (Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animationDictionary))
         {
-            int flags = 1835009;
-            if (setRepeat) flags |= 1;
-            if (isWholeBodyFlag != 0) flags |= isWholeBodyFlag;
-            if (upperBodyOnlyFlag != 0) flags |= upperBodyOnlyFlag;
+            int flags = 0;
 
-            Function.Call(Hash.TASK_PLAY_ANIM, Game.Player.Character.Handle, animationDictionary, animationName, 5f, -5f, -1, flags, 0, false, false, false);
+            if (Game.Player.Character.IsInVehicle())
+            {
+                // Use different flags for vehicle animations
+                flags = isWholeBodyFlag != 0 ? isWholeBodyFlag : upperBodyOnlyFlag;
+                if (setRepeat) flags |= 1;
+            }
+            else
+            {
+                // Apply appropriate flags for on-foot animations
+                if (isWholeBodyFlag != 0)
+                {
+                    // Whole-body animation flag
+                    flags = isWholeBodyFlag;
+                }
+                else if (upperBodyOnlyFlag != 0)
+                {
+                    // Upper-body animation with weapon visibility flag
+                    flags = upperBodyOnlyFlag | 31;
+                }
+                else
+                {
+                    // Default to keeping weapon visible
+                    flags = 31;
+                }
+
+                if (setRepeat) flags |= 1;
+            }
+
+            Function.Call(Hash.TASK_PLAY_ANIM, Game.Player.Character.Handle, animationDictionary, animationName, 3f, -3f, -1, flags, 0, false, false, false);
 
             animationPlaying = true;
             currentAnimationIndex = index;

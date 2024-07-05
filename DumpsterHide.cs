@@ -7,11 +7,13 @@ using GTA.Math;
 
 public class DumpsterMod : Script
 {
+
     private const float InteractRange = 2.0f;
     private bool isInsideDumpster = false;
     private Prop currentDumpster = null;
     private Vector3 originalPlayerPosition;
     private Prop dumpster;
+    private Ped playerPed;
 
     public DumpsterMod()
     {
@@ -44,9 +46,21 @@ public class DumpsterMod : Script
         }
     }
 
+    private Ped PlayerPed
+    {
+        get
+        {
+            if (playerPed == null || !playerPed.Exists())
+            {
+                playerPed = Game.Player.Character;
+            }
+            return playerPed;
+        }
+    }
+
     private void CheckForDumpsters()
     {
-        Vector3 playerPosition = Game.Player.Character.Position;
+        Vector3 playerPosition = PlayerPed.Position;
 
         foreach (Prop nearbyDumpster in World.GetNearbyProps(playerPosition, InteractRange))
         {
@@ -62,16 +76,21 @@ public class DumpsterMod : Script
     {
         if (isInsideDumpster)
         {
-            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, Game.Player.Character, true); // No Effect
-            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, true); // No Effect
-            Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, false); // This works
-            Function.Call(Hash.IS_ENTITY_ON_SCREEN, Game.Player.Character, false); // This ???
+            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, PlayerPed, true); // No Effect
+            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, PlayerPed, true); // No Effect
+            Function.Call(Hash.SET_ENTITY_VISIBLE, PlayerPed, false); // This works
+            Function.Call(Hash.IS_ENTITY_ON_SCREEN, PlayerPed, false); // This ???
+            Function.Call(Hash.SET_PLAYER_CAN_BE_HASSLED_BY_GANGS, PlayerPed, false);
+            Function.Call(Hash.SET_IGNORE_LOW_PRIORITY_SHOCKING_EVENTS, PlayerPed, true);
         }
         else
         {
-            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, Game.Player.Character, false); // No Effect
-            Function.Call(Hash.SET_ENTITY_VISIBLE, Game.Player.Character, true); // This works
-            Function.Call(Hash.IS_ENTITY_ON_SCREEN, Game.Player.Character, true); // This ???
+            Function.Call(Hash.SET_POLICE_IGNORE_PLAYER, PlayerPed, false); // No Effect
+            Function.Call(Hash.SET_EVERYONE_IGNORE_PLAYER, PlayerPed, false); // No Effect
+            Function.Call(Hash.SET_ENTITY_VISIBLE, PlayerPed, true); // This works
+            Function.Call(Hash.IS_ENTITY_ON_SCREEN, PlayerPed, true); // This ???
+            Function.Call(Hash.SET_PLAYER_CAN_BE_HASSLED_BY_GANGS, PlayerPed, true);
+            Function.Call(Hash.SET_IGNORE_LOW_PRIORITY_SHOCKING_EVENTS, PlayerPed, false);
         }
     }
 
@@ -80,10 +99,10 @@ public class DumpsterMod : Script
         dumpster = enteredDumpster;
         isInsideDumpster = true;
         currentDumpster = dumpster;
-        originalPlayerPosition = Game.Player.Character.Position;
+        originalPlayerPosition = PlayerPed.Position;
 
         // Calculate the direction vector from the dumpster to the player
-        Vector3 dumpsterToPlayer = Game.Player.Character.Position - dumpster.Position;
+        Vector3 dumpsterToPlayer = PlayerPed.Position - dumpster.Position;
         dumpsterToPlayer.Normalize();
         // Calculate the dot product to determine if the player is facing the dumpster
         float dotProduct = Vector3.Dot(dumpster.ForwardVector, dumpsterToPlayer);
@@ -92,7 +111,7 @@ public class DumpsterMod : Script
         {
             // Player is not facing the dumpster, adjust player's heading to face it
             float dumpsterHeading = Function.Call<float>(Hash.GET_HEADING_FROM_VECTOR_2D, dumpster.ForwardVector.X, dumpster.ForwardVector.Y);
-            Game.Player.Character.Heading = dumpsterHeading;
+            PlayerPed.Heading = dumpsterHeading;
         }
 
         // Calculate the entry position in front of the dumpster
@@ -100,7 +119,7 @@ public class DumpsterMod : Script
         entryPosition += dumpster.UpVector * 0.2f; // Adjust height as needed
 
         // Teleport the player to the entry position
-        Game.Player.Character.Position = entryPosition;
+        PlayerPed.Position = entryPosition;
 
         // Play the dumpster enter animation
         PlayDumpsterEnterAnimation();
@@ -108,18 +127,18 @@ public class DumpsterMod : Script
 
     private void PlayDumpsterEnterAnimation()
     {
-        Game.Player.Character.Task.PlayAnimation("move_climb", "standclimbup_80", 1.0f, -1, (AnimationFlags)512);
+        PlayerPed.Task.PlayAnimation("move_climb", "standclimbup_80", 1.0f, -1, (AnimationFlags)512);
 
         Wait(800);
 
         dumpster.IsCollisionEnabled = false;
 
-        Game.Player.Character.Position = dumpster.Position;
+        PlayerPed.Position = dumpster.Position;
 
         float dumpsterHeadingFinal = Function.Call<float>(Hash.GET_HEADING_FROM_VECTOR_2D, dumpster.ForwardVector.X, dumpster.ForwardVector.Y);
-        Game.Player.Character.Heading = dumpsterHeadingFinal + 180.0f;
+        PlayerPed.Heading = dumpsterHeadingFinal + 180.0f;
 
-        Game.Player.Character.Task.Cower(-1);
+        PlayerPed.Task.Cower(-1);
 
         Wait(800);
 
@@ -133,7 +152,7 @@ public class DumpsterMod : Script
         isInsideDumpster = false;
         currentDumpster = null;
 
-        Game.Player.Character.Task.ClearAll();
+        PlayerPed.Task.ClearAll();
         Wait(1500);
  
         HandlePlayerVisibilityAndAttention();
@@ -143,12 +162,12 @@ public class DumpsterMod : Script
 
     private void PlayDumpsterExitAnimation()
     {
-        Game.Player.Character.Task.PlayAnimation("move_climb", "standclimbup_80", 1.0f, -1, (AnimationFlags)512);
+        PlayerPed.Task.PlayAnimation("move_climb", "standclimbup_80", 1.0f, -1, (AnimationFlags)512);
 
         Wait(900);
 
         // Teleport player back to their original position
-        Game.Player.Character.Position = originalPlayerPosition;
+        PlayerPed.Position = originalPlayerPosition;
     }
 }
 
